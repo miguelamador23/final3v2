@@ -48,34 +48,7 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            let email = document.getElementById("email").value;
-            let password = document.getElementById("password").value;
-
-
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "login.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        let response = xhr.responseText;
-                        if (response === "Inicio de sesión correcto") {
-                            window.location.href = "login_success.html";
-                        } else {
-                            alert(response);
-                        }
-                    } else {
-                        alert("Ocurrió un error al iniciar sesión. Por favor, intenta nuevamente más tarde.");
-                    }
-                }
-            };
-            xhr.send("email=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password));
-        });
-    </script>
+   
 </body>
 
 </html>

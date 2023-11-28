@@ -12,27 +12,20 @@ try {
     die("Error de conexión: " . $conn->connect_error);
   } 
 
-  
-  $sql = "SELECT name, phone, direction FROM users";
+  $email = $_POST["email"];
+  $password = $_POST["password"];
+
+  $sql = "SELECT * FROM usuarios WHERE name, phone, direction FROM usuarios WHERE email = '$email' AND password = '$password'";
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
-    
-    while ($row = $result->fetch_assoc()) {
-      echo "Name: " . $row["name"] . "<br>";
-      echo "Phone: " . $row["phone"] . "<br>";
-      echo "Direction: " . $row["direction"] . "<br>";
-    }
+    echo "Ingreso correcto";
   } else {
-    echo "No se encontraron resultados.";
+    echo "Credenciales inválidas. Por favor, inténtalo nuevamente.";
   }
 
   $conn->close();
 } catch (Exception $e) {
   echo "Error: " . $e->getMessage();
-}
-
-function login($email, $password) {
- 
 }
 ?>
