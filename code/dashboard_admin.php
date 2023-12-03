@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universidad</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
     <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons">
 
@@ -40,9 +42,36 @@
 
         .modal {
             display: none;
-            background-color: white;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
             padding: 20px;
-            border-radius: 8px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .material-icons-outlined {
@@ -59,6 +88,13 @@
             direction: ltr;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-somoothing: grayscale;
+        }
+
+        .boton1 {
+            width: 100px;
+            height: 30px;
+            font-size: 55%;
+            margin-left: 750px;
         }
     </style>
 </head>
@@ -95,16 +131,18 @@
                 <div class="ml-5 inline-block p-8 h-50 mt-2 shadow-md rounded-md">
 
                     <p>Informacion de alumnos
-                        <button class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded" onclick="toggleModal('modal')">
-                            Agregar Alumno
-                        </button>
+
+                        <button id="openModalBtn" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
+                            Agregar Alumnos</button>
+
                     </p>
 
-                    <div class="fixed z-10 inset-0 overflow-y-auto modal" x-show="modal" x-cloak>
-                        <div class="flex items-end justify-center min-h-screen">
-                            <div class="bg-white rounded-lg p-8 m-4 max-w-xl w-full" @click.away="modal = false">
+
+                    <div id="myModal" class="modal">
+                        <div class="modal-content flex items-end justify-center min-h-screen">
+                            <div class="bg-white rounded-lg p-4 m-4 max-w-md w-full">
                                 <h2 class="text-2xl font-bold mb-8">Agregar Alumno</h2>
-                                <form action="">
+                                <form action="../config/agregar_alumno.php" method="POST">
                                     <div class="mb-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2" for="dni">
                                             DNI
@@ -142,10 +180,9 @@
                                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="birthdate" type="date" placeholder="Fecha de nacimiento">
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                                            Guardar cambios
-                                        </button>
-                                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="modal = false">
+                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                            Guardar cambios</button>
+                                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="closeModal()">
                                             Cerrar
                                         </button>
                                     </div>
@@ -153,7 +190,6 @@
                             </div>
                         </div>
                     </div>
-
                     <hr>
                     <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
                         Copy
@@ -197,23 +233,44 @@
 
     <script>
         function toggleDashboard(dashboardId) {
-            var dashboard = document.getElementById(dashboardId);
-
+            let dashboard = document.getElementById(dashboardId);
             if (dashboard.style.display === "none") {
                 dashboard.style.display = "block";
             } else {
                 dashboard.style.display = "none";
             }
         }
+        $(document).ready(function() {
+        
+            let modal = $("#myModal");
 
-        function toggleModal(modalId) {
-            var modal = document.getElementById(modalId);
-            modal.style.display = modal.style.display === "none" ? "flex" : "none";
-        }
+            let btn = $("#openModalBtn");
+
+       
+            let closeBtn = $(".close");
+
+        
+            btn.click(function() {
+                modal.css("display", "block");
+            });
+
+           
+            closeBtn.click(function() {
+                modal.css("display", "none");
+            });
+        });
+
 
         $(document).ready(function() {
             $('#myTable').DataTable();
         });
+
+
+        function closeModal() {
+
+            let modal = document.getElementById("myModal"); 
+            modal.style.display = "none";
+        }
     </script>
 </body>
 
