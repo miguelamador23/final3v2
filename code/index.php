@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } elseif ($email === 'alumno@alumno' && $password === 'alumno') {
             $_SESSION['user_id'] = $el_id_del_usuario;
-            header("Location: ../code/dashboard_alumnos.php");
+            header("Location: ../code/dashboard_alumno.php");
             exit();
         } else {
             echo "Error de usuario incorrecto. Por favor, verifica tus credenciales.";
