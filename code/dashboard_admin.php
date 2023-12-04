@@ -441,7 +441,7 @@ session_destroy();
             btn.click(function() {
                 modal.css("display", "block");
 
-                // Close any open dashboards when modal is opened
+
                 let dashboards = document.querySelectorAll('.dashboard');
                 dashboards.forEach((dashboard) => {
                     dashboard.style.display = "none";
@@ -520,6 +520,40 @@ session_destroy();
             };
             xhr.send('dni=' + dni + '&nombre=' + names + '&correo=' + email + '&direccion=' + address + '&fec_nacimiento=' + birthdate);
         });
+
+        const guardarCambiosBtnM = document.querySelector('.modal-content button[type="submit"]');
+
+        guardarCambiosBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const direccion = document.getElementById('direccion').value;
+            const fechaNacimiento = document.getElementById('fecha_nacimiento').value;
+            const claseAsignada = document.getElementById('clase_asignada').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../config/agregar_maestro.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const xhr2 = new XMLHttpRequest();
+                    xhr2.open('GET', '../config/obtener_maestro.php', true);
+                    xhr2.onreadystatechange = function() {
+                        if (xhr2.readyState === 4 && xhr2.status === 200) {
+                            const tablaMaestros = document.querySelector('.display');
+                            tablaMaestros.innerHTML = xhr2.responseText;
+                        }
+                    };
+                    xhr2.send();
+                }
+            };
+            xhr.send('nombre=' + nombre + '&email=' + email + '&direccion=' + direccion + '&fecha_nacimiento=' + fechaNacimiento + '&clase_asignada=' + claseAsignada);
+        });
+
+
+
+
 
         $(document).ready(function() {
             function openModal(modalId) {
