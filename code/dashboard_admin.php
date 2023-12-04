@@ -233,10 +233,57 @@ session_destroy();
                 <h1 id="dashboard-title" class="text-xl font-semibold text-gray-700">Lista de maestros</h1>
                 <div class="ml-5 inline-block p-8 h-50 mt-2 shadow-md rounded-md">
                     <p>Informacion de maestros
-                        <button id="openModalBtn" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
-                            Agregar maestros</button>
-
+                        <button id="openModalBtnMaestro" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
+                            Agregar Maestros
+                        </button>
                     </p>
+
+                    <div id="myModalMaestro" class="modal">
+                        <div class="modal-content flex items-end justify-center min-h-screen">
+                            <div class="bg-white rounded-lg p-4 m-4 max-w-md w-full">
+                                <h2 class="text-2xl font-bold mb-8">Agregar Maestro</h2>
+                                <form action="../config/agregar_maestro.php" method="POST">
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="Nombre">
+                                            Nombre
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" placeholder="Nombre">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="Email">
+                                            Email
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" placeholder="Email">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="Direccion">
+                                            Direccion
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" placeholder="Direccion">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="Fec. Nacimiento">
+                                            Fec. Nacimiento
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" placeholder=" Fec. Nacimiento">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="Clase Asignada">
+                                            Clase Asignada
+                                        </label>
+                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dni" type="text" placeholder=" Clase Asignada">
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                            Guardar cambios</button>
+                                        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onclick="closeModal()">
+                                            Cerrar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
                     <hr>
                     <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
@@ -367,44 +414,58 @@ session_destroy();
 
     </div>
 
-
-
-
     <script>
         function toggleDashboard(dashboardId) {
             let dashboard = document.getElementById(dashboardId);
+            let dashboards = document.querySelectorAll('.dashboard');
+
+
+            dashboards.forEach((dashboard) => {
+                dashboard.style.display = "none";
+            });
+
+
             if (dashboard.style.display === "none") {
                 dashboard.style.display = "block";
             } else {
                 dashboard.style.display = "none";
             }
         }
+
         $(document).ready(function() {
 
             let modal = $("#myModal");
             let btn = $("#openModalBtn");
             let closeBtn = $(".close");
+
             btn.click(function() {
                 modal.css("display", "block");
+
+                // Close any open dashboards when modal is opened
+                let dashboards = document.querySelectorAll('.dashboard');
+                dashboards.forEach((dashboard) => {
+                    dashboard.style.display = "none";
+                });
             });
 
             closeBtn.click(function() {
                 modal.css("display", "none");
             });
         });
-
-
         $(document).ready(function() {
             $('#myTable').DataTable();
         });
 
 
         function closeModal() {
-
             let modal = document.getElementById("myModal");
             modal.style.display = "none";
         }
 
+        function closeModal() {
+            let modal = document.getElementById("myModalMaestro");
+            modal.style.display = "none";
+        }
 
         function generarPDF() {
             let doc = new jsPDF();
@@ -430,13 +491,10 @@ session_destroy();
             });
         }
 
-
         const guardarCambiosBtn = document.querySelector('.modal-content button[type="submit"]');
-
 
         guardarCambiosBtn.addEventListener('click', function(event) {
             event.preventDefault();
-
 
             const dni = document.getElementById('dni').value;
             const email = document.getElementById('email').value;
@@ -461,6 +519,23 @@ session_destroy();
                 }
             };
             xhr.send('dni=' + dni + '&nombre=' + names + '&correo=' + email + '&direccion=' + address + '&fec_nacimiento=' + birthdate);
+        });
+
+        $(document).ready(function() {
+            function openModal(modalId) {
+                let modal = $("#" + modalId);
+                modal.css("display", "block");
+            }
+
+            const btnAgregarMaestros = $("#openModalBtn");
+            btnAgregarMaestros.on("click", function() {
+                openModal("myModalAlumno");
+            });
+
+            const btnAgregarMaestro = $("#openModalBtnMaestro");
+            btnAgregarMaestro.on("click", function() {
+                openModal("myModalMaestro");
+            });
         });
     </script>
 </body>
