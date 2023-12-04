@@ -1,3 +1,8 @@
+<?php
+session_start();
+session_destroy();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,6 +126,7 @@
                 <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-maestros')">Maestros</a>
                 <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-alumnos')">Alumnos</a>
                 <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-clases')">Clases</a>
+                <a href="#" class="block text-white" onclick="cerrarSesion()">Cerrar sesión</a>
             </nav>
         </div>
         <div class="ml-5 inline-block p-4 h-20 mt-2 shadow-md rounded-md">
@@ -162,12 +168,6 @@
                                             Nombre(s)
                                         </label>
                                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="names" type="text" placeholder="Nombre(s)">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="surnames">
-                                            Apellido(s)
-                                        </label>
-                                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="surnames" type="text" placeholder="Apellido(s)">
                                     </div>
                                     <div class="mb-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2" for="address">
@@ -382,17 +382,11 @@
         $(document).ready(function() {
 
             let modal = $("#myModal");
-
             let btn = $("#openModalBtn");
-
-
             let closeBtn = $(".close");
-
-
             btn.click(function() {
                 modal.css("display", "block");
             });
-
 
             closeBtn.click(function() {
                 modal.css("display", "none");
@@ -425,6 +419,49 @@
 
             doc.save("alumnos.pdf");
         }
+
+        function cerrarSesion() {
+            $.ajax({
+                url: '../code/index.php',
+                method: 'POST',
+                success: function(response) {
+                    window.location.href = '../code/index.php';
+                }
+            });
+        }
+
+
+        const guardarCambiosBtn = document.querySelector('.modal-content button[type="submit"]');
+
+
+        guardarCambiosBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+
+            const dni = document.getElementById('dni').value;
+            const email = document.getElementById('email').value;
+            const names = document.getElementById('names').value;
+            const address = document.getElementById('address').value;
+            const birthdate = document.getElementById('birthdate').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../config/agregar_alumno.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const xhr2 = new XMLHttpRequest();
+                    xhr2.open('GET', '../config/obtener_alumnos.php', true);
+                    xhr2.onreadystatechange = function() {
+                        if (xhr2.readyState === 4 && xhr2.status === 200) {
+                            const tablaAlumnos = document.querySelector('.display');
+                            tablaAlumnos.innerHTML = xhr2.responseText;
+                        }
+                    };
+                    xhr2.send();
+                }
+            };
+            xhr.send('dni=' + dni + '&nombre=' + names + '&correo=' + email + '&direccion=' + address + '&fec_nacimiento=' + birthdate);
+        });
     </script>
 </body>
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universidad</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .logo {
             width: 40px;
@@ -34,6 +35,7 @@
                 <hr>
                 <h2 class="text-center text-white">Menu Maestro</h2>
                 <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-alumnos-2')">Alumnos</a>
+                <a href="#" class="block text-white" onclick="cerrarSesion()">Cerrar sesión</a>
 
             </nav>
         </div>
@@ -97,7 +99,22 @@
                             dashboard.style.display = "none";
                         }
                     }
+
+                    function cerrarSesion() {
+                        $.ajax({
+                            url: '../code/index.php',
+                            method: 'POST',
+                            success: function(response) {
+                                window.location.href = '../code/index.php';
+                            }
+                        });
+                    }
                 </script>
+
+                <?php
+                session_start();
+                session_destroy();
+                ?>
 </body>
 
 </html>
