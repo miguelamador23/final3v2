@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universidad</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons">
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 
     <style>
         .logo {
@@ -115,16 +117,17 @@
                     Administrador</h2>
                 <hr>
                 <h2 class="text-center text-white">Menu Administrador</h2>
-                <a href="#" class="block text-white">Permisos</a>
-                <a href="#" class="block text-white">Maestros</a>
+                <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-permisos')">Permisos</a>
+                <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-maestros')">Maestros</a>
                 <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-alumnos')">Alumnos</a>
-                <a href="#" class="block text-white">Clases</a>
+                <a href="#" class="block text-white" onclick="toggleDashboard('dashboard-clases')">Clases</a>
             </nav>
         </div>
         <div class="ml-5 inline-block p-4 h-20 mt-2 shadow-md rounded-md">
             <h2 class="text-xl font-semibold text-gray-700">Bienvenido</h2>
             <p class="text-gray-600">Selecciona la acción que quieras realizar en las pestañas del menú de la izquierda
             </p>
+
 
             <div id="dashboard-alumnos" class="p-6 min-h-screen" style="display: none;">
                 <h1 id="dashboard-title" class="text-xl font-semibold text-gray-700">Lista de alumnos</h1>
@@ -136,7 +139,6 @@
                             Agregar Alumnos</button>
 
                     </p>
-
 
                     <div id="myModal" class="modal">
                         <div class="modal-content flex items-end justify-center min-h-screen">
@@ -197,7 +199,7 @@
                     <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
                         Excel
                     </button>
-                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2" onclick="generarPDF()">
                         PDF
                     </button>
 
@@ -208,17 +210,17 @@
                     $result = $mysqli->query($query);
                     if ($result) {
                         echo "<table class='display'>";
-                        echo "<tr><th class='w-1/5 text-left'>Dni</th><th class='w-1/5 text-left'>Nombre</th><th class='w-1/5 text-left'>Correo</th><th class='w-1/5 text-left'>Direccion</th><th class='w-1/5 text-left'>Fec. Nacimiento</th><th class='w-1/5 text-left'>Acciones</th></tr>";
+                        echo "<tr><th class='w-1/6 text-left'>Dni</th><th class='w-1/6 text-left'>Nombre</th><th class='w-1/6 text-left'>Correo</th><th class='w-1/6 text-left'>Direccion</th><th class='w-1/6 text-left'>Fec. Nacimiento</th><th class='w-1/6 text-left'>Acciones</th></tr>";
                         $count = 0;
                         while ($row = $result->fetch_assoc()) {
                             $count++;
                             echo "<tr class='border-t border-b border-gray-300 mb-2'>";
-                            echo "<td class='w-1/5 text-left py-2'>" . $row['DNI'] . "</td>";
-                            echo "<td class='w-1/5 text-left py-2'>" . $row['NOMBRE'] . "</td>";
-                            echo "<td class='w-1/5 text-left py-2'>" . $row['CORREO'] . "</td>";
-                            echo "<td class='w-1/5 text-left py-2'>" . $row['DIRECCION'] . "</td>";
-                            echo "<td class='w-1/5 text-left py-2'>" . $row['FEC_NACIMIENTO'] . "</td>";
-                            echo "<td class='w-1/5 text-left py-2'><button class='btn-editar'><i class='material-icons-outlined'>edit</i></button> <button class='btn-borrar'><i class='material-icons-outlined'>delete</i></button></td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['DNI'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['NOMBRE'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['CORREO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['DIRECCION'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['FEC_NACIMIENTO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'><button class='btn-editar'><i class='material-icons-outlined'>edit</i></button> <button class='btn-borrar'><i class='material-icons-outlined'>delete</i></button></td>";
                             echo "</tr>";
                         }
                         echo "</table>";
@@ -226,10 +228,147 @@
                     ?>
                 </div>
             </div>
+
+            <div id="dashboard-maestros" class="dashboard p-6 min-h-screen" style="display: none;">
+                <h1 id="dashboard-title" class="text-xl font-semibold text-gray-700">Lista de maestros</h1>
+                <div class="ml-5 inline-block p-8 h-50 mt-2 shadow-md rounded-md">
+                    <p>Informacion de maestros
+                        <button id="openModalBtn" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
+                            Agregar maestros</button>
+
+                    </p>
+
+                    <hr>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Copy
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Excel
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2" onclick="generarPDF()">
+                        PDF
+                    </button>
+                    <?php
+                    include('../config/conexion.php');
+                    $query = "SELECT * FROM maestros";
+                    $result = $mysqli->query($query);
+                    if ($result) {
+                        echo "<table class='display'>";
+                        echo "<tr><th class='w-1/6 text-left'>Nombre</th><th class='w-1/6 text-left'>Email</th><th class='w-1/6 text-left'>Direccion</th><th class='w-1/6 text-left'>Fec. Nacimiento</th><th class='w-1/6 text-left'>Clase Asignada</th><th class='w-1/6 text-left'>Acciones</th></tr>";
+                        $count = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            $count++;
+                            echo "<tr class='border-t border-b border-gray-300 mb-2'>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['NOMBRE'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['EMAIL'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['DIRECCION'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['FEC_NACIMIENTO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['CLASE_ASIGNADA'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'><button class='btn-editar'><i class='material-icons-outlined'>edit</i></button> <button class='btn-borrar'><i class='material-icons-outlined'>delete</i></button></td>";
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    }
+                    ?>
+
+                </div>
+            </div>
+
+            <div id="dashboard-clases" class="dashboard p-6 min-h-screen" style="display: none;">
+                <h1 id="dashboard-title" class="text-xl font-semibold text-gray-700">Lista de clases</h1>
+                <div class="ml-5 inline-block p-8 h-50 mt-2 shadow-md rounded-md">
+                    <p>Información de clases
+                        <button id="openModalBtn" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
+                            Agregar clases
+                        </button>
+                    </p>
+
+                    <hr>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Copy
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Excel
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2" onclick="generarPDF()">
+                        PDF
+                    </button>
+
+                    <?php
+                    include('../config/conexion.php');
+                    $query = "SELECT * FROM clases";
+                    $result = $mysqli->query($query);
+                    if ($result) {
+                        echo "<table class='display'>";
+                        echo "<tr><th class='w-1/6 text-left'>#</th><th class='w-1/6 text-left'>Clase</th><th class='w-1/6 text-left'>Maestro</th><th class='w-1/6 text-left'>Alumnos Inscritos</th><th class='w-1/6 text-left'>Acciones</th></tr>";
+                        $count = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            $count++;
+                            echo "<tr class='border-t border-b border-gray-300 mb-2'>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['ID'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['CLASE'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['MAESTRO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['ALUMNOS_INSCRITOS'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'><button class='btn-editar'><i class='material-icons-outlined'>edit</i></button> <button class='btn-borrar'><i class='material-icons-outlined'>delete</i></button></td>";
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    }
+                    ?>
+
+                </div>
+            </div>
+
+            <div id="dashboard-permisos" class="dashboard p-6 min-h-screen" style="display: none;">
+                <h1 id="dashboard-title" class="text-xl font-semibold text-gray-700">Lista de permisos</h1>
+                <div class="ml-5 inline-block p-8 h-50 mt-2 shadow-md rounded-md">
+                    <p>Información de permisos
+                        <button id="openModalBtn" class="boton1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded">
+                            Agregar permisos
+                        </button>
+                    </p>
+
+                    <hr>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Copy
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2">
+                        Excel
+                    </button>
+                    <button class="bg-gray-900 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded mt-2" onclick="generarPDF()">
+                        PDF
+                    </button>
+                    <?php
+                    include('../config/conexion.php');
+                    $query = "SELECT * FROM permisos";
+                    $result = $mysqli->query($query);
+                    if ($result) {
+                        echo "<table class='display'>";
+                        echo "<tr><th class='w-1/6 text-left'>#</th><th class='w-1/6 text-left'>Email/User</th><th class='w-1/6 text-left'>Permiso</th><th class='w-1/6 text-left'>Estado</th><th class='w-1/6 text-left'>Acciones</th></tr>";
+                        $count = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            $count++;
+                            echo "<tr class='border-t border-b border-gray-300 mb-2'>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['ID'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['EMAIL'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['PERMISO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'>" . $row['ESTADO'] . "</td>";
+                            echo "<td class='w-1/6 text-left py-2'><button class='btn-editar'><i class='material-icons-outlined'>edit</i></button> <button class='btn-borrar'><i class='material-icons-outlined'>delete</i></button></td>";
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    }
+                    ?>
+
+                </div>
+            </div>
+
         </div>
-    </div>
 
     </div>
+
+
+
 
     <script>
         function toggleDashboard(dashboardId) {
@@ -241,20 +380,20 @@
             }
         }
         $(document).ready(function() {
-        
+
             let modal = $("#myModal");
 
             let btn = $("#openModalBtn");
 
-       
+
             let closeBtn = $(".close");
 
-        
+
             btn.click(function() {
                 modal.css("display", "block");
             });
 
-           
+
             closeBtn.click(function() {
                 modal.css("display", "none");
             });
@@ -268,8 +407,23 @@
 
         function closeModal() {
 
-            let modal = document.getElementById("myModal"); 
+            let modal = document.getElementById("myModal");
             modal.style.display = "none";
+        }
+
+
+        function generarPDF() {
+            let doc = new jsPDF();
+
+            let tablaAlumnos = document.getElementById("alumnos");
+
+            doc.autoTable({
+                html: tablaAlumnos,
+                startY: 10,
+                theme: 'grid',
+            });
+
+            doc.save("alumnos.pdf");
         }
     </script>
 </body>
